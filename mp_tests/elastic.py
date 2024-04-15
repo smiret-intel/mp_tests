@@ -134,7 +134,6 @@ import numpy as np
 from numpy.linalg import inv
 from numpy.linalg import eig
 from numpy.linalg import matrix_rank
-from ase.calculators.kim.kim import KIM
 from ase.optimize.precon import PreconLBFGS
 from ase.units import GPa
 
@@ -143,7 +142,6 @@ import numdifftools as ndt
 from numdifftools.step_generators import MaxStepGenerator
 from scipy.optimize import minimize
 import math
-from crystal_genome_util.aflow_util import AFLOW
 
 # Encoding of symmetry restrictions on elasticity tensors.
 # The keys are the Voigt indices of non-independent components.

@@ -11,6 +11,8 @@ This data has been downloaded and preprocessed to speed up testing process.
 Installation:
     pip install git+https://github.com/EFuem/mp_tests.git
 
+    If KIM models are to be used, the kimpy package and the KIM-API must also be installed.
+
 Example Usage:
     from mp_tests import Elasticity
 
@@ -19,7 +21,7 @@ Example Usage:
         )
 
 
-    test.mp_test()
+    test.mp_tests()
 
 
 **Note**: It's often the case for MLIPs that convergence criteria and optimization strategies adopted from the original KIM tests may be too tight/inappropriate. Work is still needed here.

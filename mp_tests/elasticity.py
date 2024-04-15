@@ -2,11 +2,13 @@ from kim_test_utils.test_driver.core import KIMTestDriver
 
 from tqdm import tqdm
 
+import os
+
 from ase.units import GPa
 
-from mp_test_driver import MPTestDriver
+from mp_tests.mp_test_driver import MPTestDriver
 
-from elastic import (
+from mp_tests.elastic import (
     ElasticConstants,
     calc_bulk,
     find_nearest_isotropy,
@@ -18,9 +20,9 @@ from pymatgen.io.ase import AseAtomsAdaptor
 
 import numpy as np
 
-from utils import load_atoms, mp_species
+from mp_tests.utils import load_atoms, mp_species
 
-from equilibrium import EquilibriumCrystalStructure
+from mp_tests.equilibrium import EquilibriumCrystalStructure
 
 # TODO: Logging
 class Elasticity(MPTestDriver):
@@ -120,7 +122,7 @@ class Elasticity(MPTestDriver):
         """
         import pickle
 
-        mp_dict = pickle.load(open("mp_elasticity_conventional_4-9-24", "rb"))
+        mp_dict = pickle.load(open("%s/%s/mp_elasticity_conventional_4-9-24" %(os.path.dirname(__file__), "data"), "rb"))
         for k, v in tqdm(mp_dict.items()):
             atoms = load_atoms(k, v)
             self(atoms)
@@ -227,8 +229,8 @@ if __name__ == "__main__":
             "Pu",
         ],
     )'''
-    test = Elasticity("SW_StillingerWeber_1985_Si__MO_405512056662_006", db_name='si.json')
-    # from mace.calculators import mace_mp
-    # model = mace_mp()
-    # test = Elasticity(model,supported_species=mp_species )
+    #test = Elasticity("SW_StillingerWeber_1985_Si__MO_405512056662_006", db_name='si.json')
+    from mace.calculators import mace_mp
+    model = mace_mp(default_dtype="float64")
+    test = Elasticity(model,supported_species=mp_species )
     test.mp_tests()

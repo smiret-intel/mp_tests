@@ -7,8 +7,8 @@ from ase.spacegroup.symmetrize import FixSymmetry
 from ase.constraints import UnitCellFilter
 from ase.optimize import BFGS, FIRE
 
-from mp_test_driver import MPTestDriver
-from utils import get_isolated_energy_per_atom
+from mp_tests.mp_test_driver import MPTestDriver
+from mp_tests.utils import get_isolated_energy_per_atom
 
 
 class EquilibriumCrystalStructure(MPTestDriver):
