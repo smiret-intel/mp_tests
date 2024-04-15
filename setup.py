@@ -7,10 +7,8 @@ setup(
     description = ("A suite of property tests for Materials Project data using KIM models or arbitrary ASE Calculators"),
     license = "BSD",
     packages=find_packages(),
-    # git+https://github.com/openkim/crystal-genome-util.git
-    # git+https://github.com/openkim-hackathons/kim-test-utils.git
-    # kimpy
-    # kim_query
+    package_data={"": ['*.pkl']},
+    include_package_data=True,
     install_requires = [
         'tqdm',
         'tinydb',

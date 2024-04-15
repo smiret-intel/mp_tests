@@ -122,7 +122,7 @@ class Elasticity(MPTestDriver):
         """
         import pickle
 
-        mp_dict = pickle.load(open("%s/%s/mp_elasticity_conventional_4-9-24" %(os.path.dirname(__file__), "data"), "rb"))
+        mp_dict = pickle.load(open("%s/%s/mp_elasticity_conventional_4-9-24.pkl" %(os.path.dirname(__file__), "data"), "rb"))
         for k, v in tqdm(mp_dict.items()):
             atoms = load_atoms(k, v)
             self(atoms)
