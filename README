@@ -9,7 +9,7 @@ Functionality exists to compute elastic constants (and equilibrium crystal struc
 This data has been downloaded and preprocessed to speed up testing process.
 
 Installation:
-    pip install git+
+    pip install git+https://github.com/EFuem/mp_tests.git
 
 Example Usage:
     from mp_tests import Elasticity
@@ -22,4 +22,4 @@ Example Usage:
     test.mp_test()
 
 
-*Note*: It's often the case for MLIPs that convergence criteria and optimization strategies adopted from the original KIM tests may be too tight/inappropriate. Work is still needed here.
+**Note**: It's often the case for MLIPs that convergence criteria and optimization strategies adopted from the original KIM tests may be too tight/inappropriate. Work is still needed here.
