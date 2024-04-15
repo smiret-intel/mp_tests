@@ -24,4 +24,4 @@ Example Usage:
     test.mp_tests()
 
 
-**Note**: It's often the case for MLIPs that convergence criteria and optimization strategies adopted from the original KIM tests may be too tight/inappropriate. Work is still needed here.
+Note: It's often the case for MLIPs that convergence criteria and optimization strategies adopted from the original KIM tests may be too tight/inappropriate. Work is still needed here.
