@@ -98,5 +98,15 @@ class EquilibriumCrystalStructure(MPTestDriver):
         self.insert_mp_outputs(
             self.atoms.info["mp-id"], "cell-angles", gt_angles, angles
         )
+        self.insert_mp_outputs(
+            self.atoms.info["mp-id"], "energy-per-atom", None, energy_per_atom
+        )
+        self.insert_mp_outputs(
+            self.atoms.info["mp-id"], "max-residual-force", None, np.max(np.abs(forces))
+        )
+        self.insert_mp_outputs(
+            self.atoms.info["mp-id"], "max-residual-stress", None, np.max(np.abs(stress))
+        )
+
     def __name__(self):
         return "EquilibriumCrystalStructure"
