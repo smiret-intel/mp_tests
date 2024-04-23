@@ -137,7 +137,7 @@ from numpy.linalg import matrix_rank
 from ase.optimize.precon import PreconLBFGS
 from ase.units import GPa
 
-# @ from ase.constraints import ExpCellFilter
+from ase.constraints import ExpCellFilter, UnitCellFilter
 import numdifftools as ndt
 from numdifftools.step_generators import MaxStepGenerator
 from scipy.optimize import minimize
@@ -401,7 +401,6 @@ def minimize_PreconLBFGS(
         iteration_limits_reached = False
     return iteration_limits_reached, minimization_stalled
 
-
 class ElasticConstants(object):
     """
     Compute the elastic constants of an arbitrary crystal
@@ -579,7 +578,7 @@ class ElasticConstants(object):
                         smax=smax,
                         steps=steps,
                         variable_cell_flag=False,
-                        logfile=None,
+                        logfile='_',
                     )
                 energy = self.supercell.get_potential_energy()
             else:

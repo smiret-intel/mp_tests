@@ -50,9 +50,9 @@ class Elasticity(MPTestDriver):
                 Other arguements which are passed to EquilibriumCrystalStructure
         """
         eq_test = EquilibriumCrystalStructure(
-            self._calc, supported_species=self.supported_species, db_name=self.db_name, **kwargs
+            self._calc, supported_species=self.supported_species, db_name=self.db_name
         )
-        eq_test(self.atoms)
+        eq_test(self.atoms, **kwargs)
         if eq_test.success is False:
             return
         self.atoms = eq_test.atoms
@@ -115,18 +115,6 @@ class Elasticity(MPTestDriver):
             self.atoms.info["bulk-modulus-reuss"],
             bulk,
         )
-
-    def mp_tests(self):
-        """Loads all structures with computed elastic constants from Materials Project and computes
-        elastic constants for it if the model supports the species present
-        """
-        import pickle
-
-        mp_dict = pickle.load(open("%s/%s/mp_elasticity_conventional_4-9-24.pkl" %(os.path.dirname(__file__), "data"), "rb"))
-        for k, v in tqdm(mp_dict.items()):
-            atoms = load_atoms(k, v)
-            self(atoms)
-
 
 if __name__ == "__main__":
     '''

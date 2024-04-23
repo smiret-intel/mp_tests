@@ -4,13 +4,14 @@ import numpy as np
 import os
 from tqdm import tqdm
 from ase import Atoms
-from ase.spacegroup.symmetrize import FixSymmetry
-from ase.constraints import UnitCellFilter
-from ase.optimize import BFGS, FIRE, BFGSLineSearch
+from ase.constraints import UnitCellFilter, FixSymmetry
+from ase.optimize import BFGS, FIRE, BFGSLineSearch,FIRE2
 
 from mp_tests.mp_test_driver import MPTestDriver
 from mp_tests.utils import get_isolated_energy_per_atom
 from mp_tests.utils import load_atoms, mp_species
+
+from jobflow import job
 
 class EquilibriumCrystalStructure(MPTestDriver):
     def _calculate(self, maxstep=0.05, ftol=1e-8, it=10000):
@@ -44,7 +45,7 @@ class EquilibriumCrystalStructure(MPTestDriver):
         self.atoms.set_constraint(symmetry)
         atoms_wrapped = UnitCellFilter(self.atoms)
         # Optimize
-        opt = BFGSLineSearch(atoms_wrapped, maxstep=maxstep)  # logfile=None)
+        opt = FIRE2(atoms_wrapped, maxstep=maxstep)  # logfile=None)
         try:
             converged = opt.run(fmax=ftol, steps=it)
             iteration_limits_reached = not converged
@@ -97,14 +98,5 @@ class EquilibriumCrystalStructure(MPTestDriver):
         self.insert_mp_outputs(
             self.atoms.info["mp-id"], "cell-angles", gt_angles, angles
         )
-
-    def mp_tests(self):
-        """Loads all structures with computed elastic constants from Materials Project and computes
-        elastic constants for it if the model supports the species present
-        """
-        import pickle
-
-        mp_dict = pickle.load(open("%s/%s/mp_elasticity_conventional_4-9-24.pkl" %(os.path.dirname(__file__), "data"), "rb"))
-        for k, v in tqdm(mp_dict.items()):
-            atoms = load_atoms(k, v)
-            self(atoms)
+    def __name__(self):
+        return "EquilibriumCrystalStructure"
