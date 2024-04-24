@@ -745,7 +745,8 @@ class ElasticConstants(object):
                     hessian, info = hess(np.zeros(6, dtype=float))
                     hessian_error_estimate = info.error_estimate
                     break
-                except:
+                except Exception as e:
+                    print (e) 
                     success = False
 
         elif method == "stress-condensed" or method == "stress-condensed-fast":
