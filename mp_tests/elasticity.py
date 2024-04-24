@@ -26,7 +26,7 @@ from mp_tests.equilibrium import EquilibriumCrystalStructure
 
 # TODO: Logging
 class Elasticity(MPTestDriver):
-    def _calculate(self, method="energy-condensed", **kwargs):
+    def _calculate(self, method="energy-condensed", ignore_relax= False, **kwargs):
         """
         Performs calculation of elastic constants as implemented in elastic.py and writes output to TinyDB file. 
         Will minimize crystal structure first using EquilibriumCrystalStructure test
@@ -53,8 +53,9 @@ class Elasticity(MPTestDriver):
             self._calc, supported_species=self.supported_species, db_name=self.db_name
         )
         eq_test(self.atoms, **kwargs)
-        if eq_test.success is False:
-            return
+        if not ignore_relax:
+            if eq_test.success is False:
+                return
         self.atoms = eq_test.atoms
         del self.atoms.constraints
 
@@ -220,5 +221,5 @@ if __name__ == "__main__":
     #test = Elasticity("SW_StillingerWeber_1985_Si__MO_405512056662_006", db_name='si.json')
     from mace.calculators import mace_mp
     model = mace_mp(default_dtype="float64")
-    test = Elasticity(model,supported_species=mp_species )
-    test.mp_tests()
+    test = Elasticity(model,supported_species=mp_species, db_name='mp.json' )
+    test.mp_tests(it=100)
