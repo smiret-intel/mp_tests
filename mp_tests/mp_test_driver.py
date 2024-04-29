@@ -49,14 +49,14 @@ class MPTestDriver(KIMTestDriver):
         return True
 
     
-    def mp_tests(self, **kwargs):
+    def mp_tests(self, job_n=0, n_calcs=10733,**kwargs):
         """Loads all structures with computed elastic constants from Materials Project and computes
         elastic constants for it if the model supports the species present
         """
         import pickle
 
         mp_dict = pickle.load(open("%s/%s/mp_elasticity_conventional_4-9-24.pkl" %(os.path.dirname(__file__), "data"), "rb"))
-        for k, v in tqdm(list(mp_dict.items())[:]):
+        for k, v in tqdm(list(mp_dict.items())[job_n*n_calcs:(job_n+1)*n_calcs]):
             atoms = load_atoms(k, v)
             self(atoms, **kwargs)
 

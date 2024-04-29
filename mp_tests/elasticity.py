@@ -222,4 +222,4 @@ if __name__ == "__main__":
     from mace.calculators import mace_mp
     model = mace_mp(default_dtype="float64")
     test = Elasticity(model,supported_species=mp_species, db_name='mp.json' )
-    test.mp_tests(it=100)
+    test.mp_tests(job_n=0, n_calcs=10,it=10,ignore_relax=True, method= "stress-condensed-fast")

@@ -578,7 +578,7 @@ class ElasticConstants(object):
                         smax=smax,
                         steps=steps,
                         variable_cell_flag=False,
-                        logfile='_',
+                        logfile='-',
                     )
                 energy = self.supercell.get_potential_energy()
             else:
