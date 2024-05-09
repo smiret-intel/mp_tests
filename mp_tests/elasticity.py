@@ -59,7 +59,7 @@ class Elasticity(MPTestDriver):
         self.atoms = eq_test.atoms
         del self.atoms.constraints
 
-        # print('\nE L A S T I C  C O N S T A N T  C A L C U L A T I O N S\n')
+        print('\nE L A S T I C  C O N S T A N T  C A L C U L A T I O N S\n')
 
         moduli = ElasticConstants(self.atoms, condensed_minimization_method="bfgs")
         elastic_constants, error_estimate = moduli.results(
