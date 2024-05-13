@@ -70,7 +70,6 @@ class MatSciMLCalculator(Calculator):
         return_dict["lattice_features"] = lattice_features
 
     def _convert_atoms_to_graph(self, atoms):
-        print (atoms.arrays)
         structure = AseAtomsAdaptor.get_structure(atoms)
         data = {"structure": structure}
         return_dict = {}
