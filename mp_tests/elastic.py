@@ -732,8 +732,10 @@ class ElasticConstants(object):
                     #      Now just taken errors for hess_ee which is incorrect.
                     hessian_error_estimate = info.error_estimate[0:6, 0:6]
                     break
-                except:
+                except Exception as e:
+                    print (e)
                     success = False
+                    return e,'_', success
 
         elif method == "energy-condensed":
             # Compute stiffness matrix using condensed energy that is
@@ -748,6 +750,7 @@ class ElasticConstants(object):
                 except Exception as e:
                     print (e) 
                     success = False
+                    return e,'_', success
 
         elif method == "stress-condensed" or method == "stress-condensed-fast":
             # Compute stiffness matrix using condensed stress that is
@@ -760,14 +763,16 @@ class ElasticConstants(object):
                     hessian, info = jac(np.zeros(6, dtype=float))
                     hessian_error_estimate = info.error_estimate
                     break
-                except:
+                except Exception as e:
+                    print (e)
                     success = False
+                    return e,'_', success
 
         else:
             raise RuntimeError("Unknown method in results: method = " + method)
 
-        if not success:
-            raise RuntimeError("Unable to compute Hessian for method = ", method)
+        #if not success:
+        #    raise RuntimeError("Unable to compute Hessian for method = ", method)
 
         elastic_constants = np.zeros(shape=(6, 6))
         error_estimate = np.zeros(shape=(6, 6))
@@ -812,7 +817,7 @@ class ElasticConstants(object):
                     error_estimate[m, n] = err
                     error_estimate[n, m] = err
 
-        return elastic_constants, error_estimate
+        return elastic_constants, error_estimate, True
 
 
 def calc_bulk(elastic_constants):

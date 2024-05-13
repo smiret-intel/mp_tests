@@ -11,7 +11,6 @@ from mp_tests.mp_test_driver import MPTestDriver
 from mp_tests.utils import get_isolated_energy_per_atom
 from mp_tests.utils import load_atoms, mp_species
 
-from jobflow import job
 
 class EquilibriumCrystalStructure(MPTestDriver):
     def _calculate(self, maxstep=0.05, ftol=1e-8, it=10000):
@@ -53,7 +52,6 @@ class EquilibriumCrystalStructure(MPTestDriver):
         except:
             minimization_stalled = True
             iteration_limits_reached = False
-            return
         if minimization_stalled or iteration_limits_reached:
             self.success = False
         else:
@@ -98,14 +96,15 @@ class EquilibriumCrystalStructure(MPTestDriver):
         self.insert_mp_outputs(
             self.atoms.info["mp-id"], "cell-angles", gt_angles, angles
         )
+        print (energy_per_atom)
         self.insert_mp_outputs(
-            self.atoms.info["mp-id"], "energy-per-atom", None, energy_per_atom
+            self.atoms.info["mp-id"], "energy-per-atom", None, str(float(energy_per_atom))
         )
         self.insert_mp_outputs(
-            self.atoms.info["mp-id"], "max-residual-force", None, np.max(np.abs(forces))
+            self.atoms.info["mp-id"], "max-residual-force", None, str(np.max(np.abs(forces)))
         )
         self.insert_mp_outputs(
-            self.atoms.info["mp-id"], "max-residual-stress", None, np.max(np.abs(stress))
+            self.atoms.info["mp-id"], "max-residual-stress", None, str(np.max(np.abs(stress)))
         )
 
     def __name__(self):

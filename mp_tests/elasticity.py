@@ -26,7 +26,7 @@ from mp_tests.equilibrium import EquilibriumCrystalStructure
 
 # TODO: Logging
 class Elasticity(MPTestDriver):
-    def _calculate(self, method="energy-condensed", ignore_relax= False, **kwargs):
+    def _calculate(self, method="energy-condensed", bulk_calc=True, ignore_relax= False, **kwargs):
         """
         Performs calculation of elastic constants as implemented in elastic.py and writes output to TinyDB file. 
         Will minimize crystal structure first using EquilibriumCrystalStructure test
@@ -46,6 +46,10 @@ class Elasticity(MPTestDriver):
         Parameters:
             method : string
                 Used to set the maximum distance an atom can move per iteration
+            bulk_calc : bool
+                Whether or not to compute bulk modulus from full elastic tensor
+            ignore_relax: bool
+                If True will proceed with elastic test even if structure wasn't successfully relaxed
             ** kwargs : 
                 Other arguements which are passed to EquilibriumCrystalStructure
         """
@@ -62,60 +66,86 @@ class Elasticity(MPTestDriver):
         print('\nE L A S T I C  C O N S T A N T  C A L C U L A T I O N S\n')
 
         moduli = ElasticConstants(self.atoms, condensed_minimization_method="bfgs")
-        elastic_constants, error_estimate = moduli.results(
+        elastic_constants, error_estimate, success = moduli.results(
             optimize=False, method=method
         )
-        bulk = calc_bulk(elastic_constants)
+        if success:
+            if bulk_calc:
+                try:
+                    bulk = calc_bulk(elastic_constants)
+                    bulk /= GPa
+                    self.insert_mp_outputs(
+                        self.atoms.info["mp-id"],
+                        "bulk-modulus-reuss",
+                        self.atoms.info["bulk-modulus-reuss"],
+                        bulk,
+                    )
+                except Exception as e:
+                    self.insert_mp_outputs(
+                        self.atoms.info["mp-id"],
+                        "bulk-modulus-reuss",
+                        self.atoms.info["bulk-modulus-reuss"],
+                        {"error": str(e)},
+                    )
 
-        # Apply unit conversion
-        elastic_constants /= GPa
-        error_estimate /= GPa
-        bulk /= GPa
-        units = "GPa"
+            # Apply unit conversion
+            elastic_constants /= GPa
+            error_estimate /= GPa
+            units = "GPa"
 
-        # Compute nearest isotropic constants and distance
-        try:
-            d_iso, bulk_iso, shear_iso = find_nearest_isotropy(elastic_constants)
-            got_iso = True
-        except:
-            got_iso = False  # Failure can occur if elastic constants are
-            # not positive definite
-        # Echo output
-        #print("\nR E S U L T S\n")
-        # print('Elastic constants [{}]:'.format(units))
-        # print(np.array_str(elastic_constants, precision=5, max_line_width=100, suppress_small=True))
-        # print()
-        # print('Error estimate [{}]:'.format(units))
-        # print(np.array_str(error_estimate, precision=5, max_line_width=100, suppress_small=True))
-        # print()
-        # print('Bulk modulus [{}] = {:.5f}'.format(units,bulk))
-        # print()
-        # if got_iso:
-        #    print('Nearest matrix of isotropic elastic constants:')
-        #    print('Distance to isotropic state [-]  = {:.5f}'.format(d_iso))
-        #    print('Isotropic bulk modulus      [{}] = {:.5f}'.format(units,bulk_iso))
-        #    print('Isotropic shear modulus     [{}] = {:.5f}'.format(units,shear_iso))
-        # else:
-        #    print('WARNING: Nearest isotropic state not computed.')
+            # Compute nearest isotropic constants and distance
+            #try:
+            #    d_iso, bulk_iso, shear_iso = find_nearest_isotropy(elastic_constants)
+            #    got_iso = True
+            #except:
+            #    got_iso = False  # Failure can occur if elastic constants are
+                # not positive definite
+            # Echo output
+            #print("\nR E S U L T S\n")
+            # print('Elastic constants [{}]:'.format(units))
+            # print(np.array_str(elastic_constants, precision=5, max_line_width=100, suppress_small=True))
+            # print()
+            # print('Error estimate [{}]:'.format(units))
+            # print(np.array_str(error_estimate, precision=5, max_line_width=100, suppress_small=True))
+            # print()
+            # print('Bulk modulus [{}] = {:.5f}'.format(units,bulk))
+            # print()
+            # if got_iso:
+            #    print('Nearest matrix of isotropic elastic constants:')
+            #    print('Distance to isotropic state [-]  = {:.5f}'.format(d_iso))
+            #    print('Isotropic bulk modulus      [{}] = {:.5f}'.format(units,bulk_iso))
+            #    print('Isotropic shear modulus     [{}] = {:.5f}'.format(units,shear_iso))
+            # else:
+            #    print('WARNING: Nearest isotropic state not computed.')
 
-        # Not sure if necessary but convert to IEEE format to match MP
-        t = Tensor.from_voigt(elastic_constants)
-        elastic_constants = t.convert_to_ieee(
-            AseAtomsAdaptor.get_structure(self.atoms)
-        ).voigt
+            # Not sure if necessary but convert to IEEE format to match MP
+            try:
+                t = Tensor.from_voigt(elastic_constants)
+                elastic_constants = t.convert_to_ieee(
+                    AseAtomsAdaptor.get_structure(self.atoms)
+                ).voigt
 
-        self.insert_mp_outputs(
-            self.atoms.info["mp-id"],
-            "elastic-constants-ieee",
-            self.atoms.info["elastic-constants-ieee"],
-            elastic_constants.tolist(),
-        )
-        self.insert_mp_outputs(
-            self.atoms.info["mp-id"],
-            "bulk-modulus-reuss",
-            self.atoms.info["bulk-modulus-reuss"],
-            bulk,
-        )
+                self.insert_mp_outputs(
+                    self.atoms.info["mp-id"],
+                    "elastic-constants-ieee",
+                    self.atoms.info["elastic-constants-ieee"],
+                    elastic_constants.tolist(),
+                )
+            except Exception as e:
+                    self.insert_mp_outputs(
+                    self.atoms.info["mp-id"],
+                    "elastic-constants-ieee",
+                    self.atoms.info["elastic-constants-ieee"],
+                    {"error": str(e)},
+                )
+                
+        else:
+                self.insert_mp_outputs(
+                self.atoms.info["mp-id"],
+                "elastic-constants-ieee",
+                self.atoms.info["elastic-constants-ieee"],
+                {"error" : str(elastic_constants)}
+            )
 
 if __name__ == "__main__":
     '''
