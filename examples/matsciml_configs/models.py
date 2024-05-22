@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from e3nn.o3 import Irreps
-from mace.modules.blocks import RealAgnosticInteractionBlock
+from mace.modules.blocks import RealAgnosticInteractionBlock, RealAgnosticResidualInteractionBlock
 from torch import nn
 from torch.nn import LayerNorm, SiLU
 
@@ -15,6 +15,9 @@ from matsciml.models import (
     TensorNet,
 )
 from matsciml.models.pyg.mace import MACEWrapper
+import torch
+from mace.modules import MACE, ScaleShiftMACE
+
 
 available_models = {
     "egnn": {
@@ -148,21 +151,27 @@ available_models = {
     "mace": {
         "encoder_class": MACEWrapper,
         "encoder_kwargs": {
+            "base_model": ScaleShiftMACE,
+            "num_atom_embedding": 89,
             "r_max": 6.0,
-            "num_bessel": 3,
-            "num_polynomial_cutoff": 3,
-            "max_ell": 2,
-            "interaction_cls": RealAgnosticInteractionBlock,
-            "interaction_cls_first": RealAgnosticInteractionBlock,
+            "num_bessel": 10,
+            "num_polynomial_cutoff": 5.0,
+            "max_ell": 3,
+            "interaction_cls": RealAgnosticResidualInteractionBlock,
+            "interaction_cls_first": RealAgnosticResidualInteractionBlock,
             "num_interactions": 2,
-            "atom_embedding_dim": 64,
-            "MLP_irreps": Irreps("256x0e"),
+            "atom_embedding_dim": 128,
+            "MLP_irreps": Irreps("16x0e"),
             "avg_num_neighbors": 10.0,
-            "correlation": 1,
+            "correlation": 3,
             "radial_type": "bessel",
             "gate": nn.Identity(),
+            ###
+            # fmt: off
+            "atomic_energies": torch.Tensor([-3.6672, -1.3321, -3.4821, -4.7367, -7.7249, -8.4056, -7.3601, -7.2846, -4.8965, 0.0000, -2.7594, -2.8140, -4.8469, -7.6948, -6.9633, -4.6726, -2.8117, -0.0626, -2.6176, -5.3905, -7.8858, -10.2684, -8.6651, -9.2331, -8.3050, -7.0490, -5.5774, -5.1727, -3.2521, -1.2902, -3.5271, -4.7085, -3.9765, -3.8862, -2.5185, 6.7669, -2.5635, -4.9380, -10.1498, -11.8469, -12.1389, -8.7917, -8.7869, -7.7809, -6.8500, -4.8910, -2.0634, -0.6396, -2.7887, -3.8186, -3.5871, -2.8804, -1.6356, 9.8467, -2.7653, -4.9910, -8.9337, -8.7356, -8.0190, -8.2515, -7.5917, -8.1697, -13.5927, -18.5175, -7.6474, -8.1230, -7.6078, -6.8503, -7.8269, -3.5848, -7.4554, -12.7963, -14.1081, -9.3549, -11.3875, -9.6219, -7.3244, -5.3047, -2.3801, 0.2495, -2.3240, -3.7300, -3.4388, -5.0629, -11.0246, -12.2656, -13.8556, -14.9331, -15.2828])
+            # fmt: on
         },
-        "output_kwargs": {"lazy": False, "input_dim": 128, "hidden_dim": 128},
+        "output_kwargs": {"lazy": False, "input_dim": 256, "hidden_dim": 256},
     },
     "generic": {
         "output_kwargs": {

@@ -66,9 +66,7 @@ class Elasticity(MPTestDriver):
         print('\nE L A S T I C  C O N S T A N T  C A L C U L A T I O N S\n')
 
         moduli = ElasticConstants(self.atoms, condensed_minimization_method="bfgs")
-        elastic_constants, error_estimate, success = moduli.results(
-            optimize=False, method=method
-        )
+        elastic_constants, error_estimate, success = moduli.results(optimize=False, method=method)
         if success:
             if bulk_calc:
                 try:

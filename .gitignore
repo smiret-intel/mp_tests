@@ -5,3 +5,7 @@ kim.log
 mp.json
 mp_tests.egg-info/
 mp_tests/__pycache__/
+
+*.ckpt
+*.json
+*.model
